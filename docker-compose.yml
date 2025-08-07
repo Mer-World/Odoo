@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+
+  odoo18:
+    image: odoo:18.0
+    depends_on:
+      - db
+    ports:
+      - "8068:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+
+
+    command: odoo -d odoo_db --dev=xml -u hustle_website --db_user=odoo --db_password=odoo --db_host=db --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons
+
+
+  odoo17:
+    image: odoo:17.0
+    depends_on:
+      - db
+    ports:
+      - "8067:8069"
+    volumes:
+      - odoo-web-data2:/var/lib/odoo
+      - ./config:/etc/odoo
+    command: odoo -d odoo_db2 --dev=xml --db_user=odoo --db_password=odoo --db_host=db /usr/lib/python3/dist-packages/odoo/addons
+
+
+
+
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+  odoo-web-data2:
